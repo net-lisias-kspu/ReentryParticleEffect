@@ -1,5 +1,9 @@
 # Reentry Particle Effect :: Change Log
 
+* 2021-0413: 1.4.0.1 (LisiasT) for KSP >= 1.4.
+	+ Making the thing compatible from KSP 1.4 to the latest
+	+ Adding KSPe installment checks facilities
+	+ Moving it into `net.lisias.ksp` hierarchy
 * 2019-0212: 1.4.0 (pizzaoverhead) for KSP 1.6.
 	+ Recompiled and updated for KSP 1.6.
 	+ Reduced the scale of the plasma trail.
