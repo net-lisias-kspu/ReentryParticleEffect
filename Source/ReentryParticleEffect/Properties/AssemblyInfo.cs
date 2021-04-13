@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ReentryParticleEffect")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Reentry Particle Effect")]
+[assembly: AssemblyDescription("Activates an unused stock particle effect for reentry, featuring a plasma trail and sparks.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("L")]
 [assembly: AssemblyProduct("ReentryParticleEffect")]
-[assembly: AssemblyCopyright("Copyright © Pizzaoverhead 2016")]
+[assembly: AssemblyCopyright("© 2016-19 Pizzaoverhead, © 2021 LisiasT")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
