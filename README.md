@@ -38,5 +38,6 @@ Please note the copyrights and trademarks in [NOTICE](./NOTICE).
 
 * [pizzaoverhead](https://forum.kerbalspaceprogram.com/index.php?/profile/26349-pizzaoverhead/) ROOT
 	+ [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/143040-*)
+	+ [CurseForge](https://www.curseforge.com/kerbal/ksp-mods/reentry-particle-effects)
 	+ [SpaceDock](https://spacedock.info/mod/819/Reentry%20Particle%20Effect)
 	+ [Github](https://github.com/pizzaoverhead/ReentryParticleEffect/)
