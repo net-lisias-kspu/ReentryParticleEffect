@@ -1,5 +1,8 @@
 # Reentry Particle Effect :: Change Log
 
+* 2019-0212: 1.4.0 (pizzaoverhead) for KSP 1.6.
+	+ Recompiled and updated for KSP 1.6.
+	+ Reduced the scale of the plasma trail.
 * 2018-0824: 1.3 (pizzaoverhead) for KSP 1.4.5
 	+ Recompiled and updated for KSP 1.4 compatibility.
 * 2016-1024: 1.2a (pizzaoverhead) for KSP 1.2
