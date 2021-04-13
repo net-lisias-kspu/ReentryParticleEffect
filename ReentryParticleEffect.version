@@ -1,0 +1,18 @@
+{
+	"NAME"		: "Reentry Particle Effect /L Unofficial",
+	"URL"		: "https://raw.githubusercontent.com/net-lisias-kspu/ReentryParticleEffect/master/<AddOn-Name>.version",
+	"DOWNLOAD"	: "https://github.com/net-lisias-kspu/ReentryParticleEffect/releases",
+	"CHANGE_LOG"	: "https://raw.githubusercontent.com/net-lisias-kspu/ReentryParticleEffect/master/CHANGE_LOG.md",
+	"CHANGE_LOG_URL": "https://raw.githubusercontent.com/net-lisias-kspu/ReentryParticleEffect/master/CHANGES.md",
+	"VERSION":{
+		"MAJOR":1,
+		"MINOR":4,
+		"PATCH":0,
+		"BUILD":0
+		},
+	"KSP_VERSION_MIN":{
+		"MAJOR":1,
+		"MINOR":6,
+		"PATCH":1
+		}
+}
