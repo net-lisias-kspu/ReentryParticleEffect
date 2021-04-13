@@ -1,2 +1,13 @@
 # Reentry Particle Effect :: Change Log
 
+* 2019-0212: 1.4.0 (pizzaoverhead) for KSP 1.6.
+	+ Recompiled and updated for KSP 1.6.
+	+ Reduced the scale of the plasma trail.
+* 2018-0824: 1.3 (pizzaoverhead) for KSP 1.4.5
+	+ Recompiled and updated for KSP 1.4 compatibility.
+* 2016-1024: 1.2a (pizzaoverhead) for KSP 1.2
+	+ Recompiled for KSP 1.2.
+* 2016-0704: 1.1 (pizzaoverhead) for KSP 1.1.3
+	+ Changed re-entry effects to activate only during harsh aerobraking.
+* 2016-0703: 1.0 (pizzaoverhead) for KSP 1.1.3
+	+ A mod for KSP that activates an unused stock particle effect for re-entry, featuring a plasma trail and sparks.
