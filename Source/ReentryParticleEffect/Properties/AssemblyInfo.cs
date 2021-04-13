@@ -31,5 +31,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.3.0.0")]
-[assembly: AssemblyFileVersion("1.3.0.0")]
+[assembly: AssemblyVersion(ReentryParticleEffect.Version.Number)]
+[assembly: AssemblyFileVersion(ReentryParticleEffect.Version.Number)]
+[assembly: KSPAssembly("ReentryParticleEffect", ReentryParticleEffect.Version.major, ReentryParticleEffect.Version.minor)]
+[assembly: KSPAssemblyDependency("KSPe", 2, 1)]
+[assembly: KSPAssemblyDependency("KSPe.UI", 2, 1)]
