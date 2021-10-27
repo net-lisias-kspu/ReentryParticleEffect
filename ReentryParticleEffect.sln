@@ -27,5 +27,8 @@ Global
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = null
 		$1.scope = text/x-csharp
+		$0.TextStylePolicy = $2
+		$2.FileWidth = 132
+		$2.scope = text/plain
 	EndGlobalSection
 EndGlobal

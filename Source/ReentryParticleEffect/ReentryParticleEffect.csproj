@@ -31,15 +31,19 @@
     <Reference Include="System" />
     <Reference Include="KSPe">
       <HintPath>..\..\..\..\..\..\LIB\plugins\KSPe.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="KSPe.UI">
       <HintPath>..\..\..\..\..\..\LIB\plugins\KSPe.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\LIB\managed\1.4.0\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\LIB\managed\1.4.0\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +57,7 @@
     </Compile>
     <Compile Include="ModuleManagerSupport.cs" />
     <Compile Include="Properties\LegalMamboJambo.cs" />
+    <Compile Include="ToolbarSupport.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Version.tt">

@@ -22,6 +22,9 @@ using System.Text.RegularExpressions;
 
 using UnityEngine;
 
+using GUI = KSPe.UI.GUI;
+using GUILayout = KSPe.UI.GUILayout;
+
 namespace ReentryParticleEffect
 {
     public static class GuiUtils
