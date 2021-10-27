@@ -37,10 +37,11 @@ namespace ReentryParticleEffect
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class ReentryParticleEffect : MonoBehaviour
     {
-        public Vector3 velocity;
-        public static int MaxParticles = 3000;
-        public static int MaxEmissionRate = 200;
-        public static float TrailScale = 0.15f;
+        public Vector3 Velocity;
+        public const int MaxParticles = 3000;
+        public const int MaxEmissionRate = 400;
+        public const float TrailScale = 0.15f;
+
         // Minimum reentry strength that the effects will activate at.
         // 0 = Activate at the first sign of the flame effects.
         // 1 = Never activate, even at the strongest reentry strength.
@@ -63,6 +64,7 @@ namespace ReentryParticleEffect
                 FXPrefab[] prefabs = effect.GetComponentsInChildren<FXPrefab>();
                 trailPrefab = prefabs[0];
             }
+
             public FXPrefab trailPrefab;
             public ParticleSystem Trail;
             public ParticleSystem Sparks;
@@ -80,18 +82,18 @@ namespace ReentryParticleEffect
             GameObject effect = (GameObject)GameObject.Instantiate(Resources.Load("Effects/fx_reentryTrail"));
             ReentryEffect reentryFx = new ReentryEffect(effect);
             // Set the effect speed high to animate as fast as is visible.
-            var trailMain = reentryFx.Trail.main;
+            ParticleSystem.MainModule trailMain = reentryFx.Trail.main;
             reentryFx.Trail.transform.localScale = new Vector3(TrailScale, TrailScale, TrailScale);
             trailMain.scalingMode = ParticleSystemScalingMode.Local;
             trailMain.simulationSpeed = 5;
 
-            var sparksMain = reentryFx.Sparks.main;
+            ParticleSystem.MainModule sparksMain = reentryFx.Sparks.main;
             sparksMain.simulationSpeed = 5;
 
             return reentryFx;
         }
 
-        public static Dictionary<Guid, ReentryEffect> VesselDict = new Dictionary<Guid, ReentryEffect>();
+        public static readonly Dictionary<Guid, ReentryEffect> VesselDict = new Dictionary<Guid, ReentryEffect>();
 
         private void FixedUpdate()
         {
@@ -151,18 +153,18 @@ namespace ReentryParticleEffect
                         effects.Sparks.transform.position = vessel.CoM + vessel.rb_velocity * Time.fixedDeltaTime;
                         sparksEmission.enabled = true;
 
-                        velocity = AeroFX.velocity * (float)AeroFX.airSpeed;
+                        this.Velocity = AeroFX.velocity * (float)AeroFX.airSpeed;
 
-                        var trailMain = effects.Trail.main;
-                        trailMain.startSpeed = velocity.magnitude;
-                        effects.Trail.transform.forward = -velocity.normalized;
+                        ParticleSystem.MainModule trailMain = effects.Trail.main;
+                        trailMain.startSpeed = this.Velocity.magnitude;
+                        effects.Trail.transform.forward = -this.Velocity.normalized;
                         trailMain.maxParticles = (int)(MaxParticles * effectStrength);
                         trailEmission.rateOverTime = (int)(MaxEmissionRate * effectStrength);
 
                         // startSpeed controls the emission cone angle. Greater than ~1 is too wide.
                         //reentryTrailSparks.startSpeed = velocity.magnitude;
-                        var sparksMain = effects.Sparks.main;
-                        effects.Sparks.transform.forward = -velocity.normalized;
+                        ParticleSystem.MainModule sparksMain = effects.Sparks.main;
+                        effects.Sparks.transform.forward = -this.Velocity.normalized;
                         sparksMain.maxParticles = (int)(MaxParticles * effectStrength);
                         sparksEmission.rateOverTime = (int)(MaxEmissionRate * effectStrength);
                     }
@@ -274,9 +276,9 @@ namespace ReentryParticleEffect
         }
 
 #if DEBUG
-        private static float effectStrength = 0;
-        private static AerodynamicsFX afx1 = null;
-        private static Rect windowPos = new Rect(Screen.width / 4, Screen.height / 4, 10f, 10f);
+        private float effectStrength = 0;
+        private AerodynamicsFX afx1 = null;
+        private Rect windowPos = new Rect(Screen.width / 4, Screen.height / 4, 10f, 10f);
 
         /// <summary>
         /// GUI draw event. Called (at least once) each frame.
@@ -286,18 +288,19 @@ namespace ReentryParticleEffect
             if (DrawGui)
                 windowPos = GUILayout.Window(GetInstanceID(), windowPos, Gui, "Test GUI", GUILayout.Width(600), GUILayout.Height(50));
         }
-        private static string _trailPlaybackText = "5";
-        private static string _sparksPlaybackText = "5";
-        private static ParticleSystemScalingMode _scalingMode;
-        private static float scaleX;
-        private static float scaleY;
-        private static float scaleZ;
-        private static string scaleXText = "1";
-        private static string scaleYText = "1";
-        private static string scaleZText = "1";
+
+        private string _trailPlaybackText = "5";
+        private string _sparksPlaybackText = "5";
+        private ParticleSystemScalingMode _scalingMode;
+        private float scaleX;
+        private float scaleY;
+        private float scaleZ;
+        private string scaleXText = "1";
+        private string scaleYText = "1";
+        private string scaleZText = "1";
 
 
-        public static void Gui(int windowID)
+        public void Gui(int windowID)
         {
             ReentryEffect effects = null;
             if (VesselDict.ContainsKey(FlightGlobals.ActiveVessel.id))
@@ -337,16 +340,16 @@ namespace ReentryParticleEffect
             }
 
             GUILayout.Label("Max Particles");
-            MaxParticles = (int)GUILayout.HorizontalSlider(MaxParticles, 0, 10000);
+            this.MaxParticles = (int)GUILayout.HorizontalSlider(this.MaxParticles, 0, 10000);
             GUILayout.Label("Max Emission Rate");
-            MaxEmissionRate = (int)GUILayout.HorizontalSlider(MaxEmissionRate, 0, 1000);
+            this.MaxEmissionRate = (int)GUILayout.HorizontalSlider(this.MaxEmissionRate, 0, 1000);
 
             GUILayout.Label("Trail");
             if (effects.Trail == null)
                 GUILayout.Label("Trail is null");
             else
             {
-                var trailMain = effects.Trail.main;
+                ParticleSystem.MainModule trailMain = effects.Trail.main;
                 float trailPlaybackSpeed = trailMain.simulationSpeed;
                 _trailPlaybackText = GuiUtils.editFloat("Playback speed", _trailPlaybackText, out trailPlaybackSpeed, 5);
                 trailMain.simulationSpeed = trailPlaybackSpeed;
@@ -410,7 +413,8 @@ namespace ReentryParticleEffect
 #endif
     }
 
-    /*[KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    #if DEBUG && AUTOCHEAT
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     class AutoStartup : UnityEngine.MonoBehaviour
     {
         public static bool first = true;
@@ -421,13 +425,15 @@ namespace ReentryParticleEffect
             {
                 first = false;
                 HighLogic.SaveFolder = "test";
-                /*var game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
+                Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
                 if (game != null && game.flightState != null && game.compatible)
-                    FlightDriver.StartAndFocusVessel(game, game.flightState.activeVesselIdx);* /
+                    FlightDriver.StartAndFocusVessel(game, game.flightState.activeVesselIdx);
                 CheatOptions.InfinitePropellant = true;
                 CheatOptions.InfiniteElectricity = true;
                 CheatOptions.IgnoreMaxTemperature = true;
+                Log.force("Cheat activated!!!");
             }
         }
-    }*/
+    }
+    #endif
 }

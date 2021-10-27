@@ -106,7 +106,7 @@ namespace ReentryParticleEffect
             GUILayout.Label(label);
             //GUILayout.FlexibleSpace();
             GUILayout.Label(" ");
-            foreach (var e in Enum.GetValues(typeof(T)))
+            foreach (object e in Enum.GetValues(typeof(T)))
             {
                 string name = e.ToString();
                 GUILayout.Toggle(false, ""); // Text parameter causes overlap.
