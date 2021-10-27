@@ -52,6 +52,7 @@
       <DependentUpon>Version.tt</DependentUpon>
     </Compile>
     <Compile Include="ModuleManagerSupport.cs" />
+    <Compile Include="Properties\LegalMamboJambo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Version.tt">

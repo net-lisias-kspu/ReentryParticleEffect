@@ -1,4 +1,4 @@
-# Reentry Particle Effect :: Change Log
+# Reentry Particle Effect /L Unleashed :: Change Log
 
 * 2021-0413: 1.4.0.1 (LisiasT) for KSP >= 1.4.
 	+ Making the thing compatible from KSP 1.4 to the latest

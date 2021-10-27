@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Reentry Particle Effect")]
+[assembly: AssemblyTitle("Reentry Particle Effect /L Unleashed")]
 [assembly: AssemblyDescription("Activates an unused stock particle effect for reentry, featuring a plasma trail and sparks.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("L Aerospace/KSP Division")]
-[assembly: AssemblyProduct("ReentryParticleEffect")]
-[assembly: AssemblyCopyright("© 2016-19 Pizzaoverhead, © 2021 LisiasT")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany(ReentryParticleEffect.LegalMamboJambo.Company)]
+[assembly: AssemblyProduct(ReentryParticleEffect.LegalMamboJambo.Product)]
+[assembly: AssemblyCopyright(ReentryParticleEffect.LegalMamboJambo.Copyright)]
+[assembly: AssemblyTrademark(ReentryParticleEffect.LegalMamboJambo.Trademark)]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -34,5 +34,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion(ReentryParticleEffect.Version.Number)]
 [assembly: AssemblyFileVersion(ReentryParticleEffect.Version.Number)]
 [assembly: KSPAssembly("ReentryParticleEffect", ReentryParticleEffect.Version.major, ReentryParticleEffect.Version.minor)]
-[assembly: KSPAssemblyDependency("KSPe", 2, 2)]
-[assembly: KSPAssemblyDependency("KSPe.UI", 2, 2)]
+[assembly: KSPAssemblyDependency("KSPe", 2, 4)]
+[assembly: KSPAssemblyDependency("KSPe.UI", 2, 4)]
