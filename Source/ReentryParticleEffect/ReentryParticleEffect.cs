@@ -12,7 +12,7 @@
 	warranty of	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 	You should have received a copy of the GNU General Public License 3.0
-	Reentry Particle Effect /L Unleashed.
+	along with Reentry Particle Effect /L Unleashed.
 	If not, see <https://www.gnu.org/licenses/>.
 
 */
