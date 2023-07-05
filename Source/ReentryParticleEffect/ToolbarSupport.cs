@@ -1,6 +1,6 @@
 ﻿/*
 	This file is part of Reentry Particle Effect /L Unleashed
-		© 2018-21 Lisias T : http://lisias.net <support@lisias.net>
+		© 2021 Lisias T : http://lisias.net <support@lisias.net>
 		© 2016-19 pizzaoverhead
 
 	Reentry Particle Effect /L is licensed as follows:

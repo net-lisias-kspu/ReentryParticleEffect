@@ -1,6 +1,6 @@
 ﻿/*
 	This file is part of Reentry Particle Effect /L Unleashed
-		© 2018-21 Lisias T : http://lisias.net <support@lisias.net>
+		© 2021 Lisias T : http://lisias.net <support@lisias.net>
 		© 2016-19 pizzaoverhead
 
 	Reentry Particle Effect /L is licensed as follows:
@@ -19,10 +19,9 @@
 using System;
 using System.Collections.Generic;
 
-using UnityEngine;
+using KSPe.Annotations;
 
-using GUI = KSPe.UI.GUI;
-using GUILayout = KSPe.UI.GUILayout;
+using UnityEngine;
 
 namespace ReentryParticleEffect
 {
@@ -37,22 +36,29 @@ namespace ReentryParticleEffect
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class ReentryParticleEffect : MonoBehaviour
     {
-        public Vector3 Velocity;
-        public const int MaxParticles = 3000;
-        public const int MaxEmissionRate = 400;
-        public const float TrailScale = 0.15f;
+		internal static bool DrawGui = true;
+		private readonly Settings.Parameters settings = Settings.Parameters.Instance;
 
-        // Minimum reentry strength that the effects will activate at.
-        // 0 = Activate at the first sign of the flame effects.
-        // 1 = Never activate, even at the strongest reentry strength.
-        public float EffectThreshold = 0.4f;
+#if DEBUG
+		private readonly Settings.UI ui;
+		public ReentryParticleEffect() : base()
+		{
+			this.ui = Settings.UI.CreateFor(this);
+		}
+#endif
 
-        public static bool DrawGui = true;
+		[UsedImplicitly]
+		private void Start()
+		{
+			settings.Load();
+			GameEvents.onVesselDestroy.Add(OnVesselDestroy);
+		}
 
-        private void Start()
-        {
-            GameEvents.onVesselDestroy.Add(OnVesselDestroy);
-        }
+		[UsedImplicitly]
+		private void OnDestroy()
+		{
+			GameEvents.onVesselDestroy.Remove(OnVesselDestroy);
+		}
 
         public class ReentryEffect
         {
@@ -83,7 +89,7 @@ namespace ReentryParticleEffect
             ReentryEffect reentryFx = new ReentryEffect(effect);
             // Set the effect speed high to animate as fast as is visible.
             ParticleSystem.MainModule trailMain = reentryFx.Trail.main;
-            reentryFx.Trail.transform.localScale = new Vector3(TrailScale, TrailScale, TrailScale);
+            reentryFx.Trail.transform.localScale = new Vector3(this.settings.TrailScale, this.settings.TrailScale, this.settings.TrailScale);
             trailMain.scalingMode = ParticleSystemScalingMode.Local;
             trailMain.simulationSpeed = 5;
 
@@ -95,9 +101,13 @@ namespace ReentryParticleEffect
 
         public static readonly Dictionary<Guid, ReentryEffect> VesselDict = new Dictionary<Guid, ReentryEffect>();
 
+#if AERODYNAMICSFX
+		internal AerodynamicsFX afx1 = null;
+#endif
+		[UsedImplicitly]
         private void FixedUpdate()
         {
-            float effectStrength = (AeroFX.FxScalar * AeroFX.state - EffectThreshold) * (1 / EffectThreshold);
+            float effectStrength = (AeroFX.FxScalar * AeroFX.state - this.settings.EffectThreshold) * (1 / this.settings.EffectThreshold);
             List<Vessel> vessels = FlightGlobals.Vessels;
             for (int i = vessels.Count - 1; i >= 0; --i)
             {
@@ -134,13 +144,11 @@ namespace ReentryParticleEffect
                 if (AeroFX != null)
                 {
                     //effects.Trail.transform.localScale = new Vector3(TrailScale, TrailScale, TrailScale);
-#if DEBUG
-                    afx1 = AeroFX;
-                    
-                    effects.Trail.transform.localScale = new Vector3(scaleX, scaleY, scaleZ);
-
-                    var main = effects.Trail.main;
-                    main.scalingMode = _scalingMode;
+#if AERODYNAMICSFX
+                    this.afx1 = AeroFX;
+                    effects.Trail.transform.localScale = new Vector3(this.settings.scaleX, this.settings.scaleY, this.settings.scaleZ);
+                    ParticleSystem.MainModule main = effects.Trail.main;
+                    main.scalingMode = this.settings.scalingMode;
 #endif
 
                     // FxScalar: Strength of the effects.
@@ -153,20 +161,20 @@ namespace ReentryParticleEffect
                         effects.Sparks.transform.position = vessel.CoM + vessel.rb_velocity * Time.fixedDeltaTime;
                         sparksEmission.enabled = true;
 
-                        this.Velocity = AeroFX.velocity * (float)AeroFX.airSpeed;
+                        this.settings.Velocity = AeroFX.velocity * (float)AeroFX.airSpeed;
 
                         ParticleSystem.MainModule trailMain = effects.Trail.main;
-                        trailMain.startSpeed = this.Velocity.magnitude;
-                        effects.Trail.transform.forward = -this.Velocity.normalized;
-                        trailMain.maxParticles = (int)(MaxParticles * effectStrength);
-                        trailEmission.rateOverTime = (int)(MaxEmissionRate * effectStrength);
+                        trailMain.startSpeed = this.settings.Velocity.magnitude;
+                        effects.Trail.transform.forward = -this.settings.Velocity.normalized;
+                        trailMain.maxParticles = (int)(this.settings.MaxParticles * effectStrength);
+                        trailEmission.rateOverTime = (int)(this.settings.MaxEmissionRate * effectStrength);
 
                         // startSpeed controls the emission cone angle. Greater than ~1 is too wide.
                         //reentryTrailSparks.startSpeed = velocity.magnitude;
                         ParticleSystem.MainModule sparksMain = effects.Sparks.main;
-                        effects.Sparks.transform.forward = -this.Velocity.normalized;
-                        sparksMain.maxParticles = (int)(MaxParticles * effectStrength);
-                        sparksEmission.rateOverTime = (int)(MaxEmissionRate * effectStrength);
+                        effects.Sparks.transform.forward = -this.settings.Velocity.normalized;
+                        sparksMain.maxParticles = (int)(this.settings.MaxParticles * effectStrength);
+                        sparksEmission.rateOverTime = (int)(this.settings.MaxEmissionRate * effectStrength);
                     }
                     else
                     {
@@ -231,10 +239,7 @@ namespace ReentryParticleEffect
             {
                 red = temp - 60f;
                 red = 329.698727446f * (float)(Math.Pow(red, -0.1332047592f));
-                if (red < 0)
-                    red = 0;
-                if (red > 255)
-                    red = 255;
+                red = Math.Max(Math.Min(red, 255), 0);
             }
 
             // Calculate green
@@ -242,20 +247,13 @@ namespace ReentryParticleEffect
             {
                 green = temp;
                 green = 99.4708025861f * (float)Math.Log(green) - 161.1195681661f;
-                if (green < 0)
-                    green = 0;
-                if (green > 255)
-                    green = 255;
             }
             else
             {
                 green = temp - 60;
                 green = 288.1221695283f * (float)Math.Pow(green, -0.0755148492f);
-                if (green < 0)
-                    green = 0;
-                if (green > 255)
-                    green = 255;
             }
+            green = Math.Max(Math.Min(green, 255), 0);
 
             // Calculate Blue
             if (temp <= 66)
@@ -266,154 +264,23 @@ namespace ReentryParticleEffect
             {
                 blue = temp - 10;
                 blue = 138.5177312231f * (float)Math.Log(blue) - 305.0447927307f;
-                if (blue < 0)
-                    blue = 0;
-                if (blue > 255)
-                    blue = 255;
+                blue = Math.Max(Math.Min(blue, 255), 0);
             }
 
             return new Color(red/255, green/255, blue/255, 1);
         }
 
-#if DEBUG
-        private float effectStrength = 0;
-        private AerodynamicsFX afx1 = null;
-        private Rect windowPos = new Rect(Screen.width / 4, Screen.height / 4, 10f, 10f);
+	#if DEBUG
+		[UsedImplicitly]
+		private void OnGUI()
+		{
+			if (!DrawGui) return;
+			this.ui.OnGUI();
+		}
+	#endif
+	}
 
-        /// <summary>
-        /// GUI draw event. Called (at least once) each frame.
-        /// </summary>
-        public void OnGUI()
-        {
-            if (DrawGui)
-                windowPos = GUILayout.Window(GetInstanceID(), windowPos, Gui, "Test GUI", GUILayout.Width(600), GUILayout.Height(50));
-        }
-
-        private string _trailPlaybackText = "5";
-        private string _sparksPlaybackText = "5";
-        private ParticleSystemScalingMode _scalingMode;
-        private float scaleX;
-        private float scaleY;
-        private float scaleZ;
-        private string scaleXText = "1";
-        private string scaleYText = "1";
-        private string scaleZText = "1";
-
-
-        public void Gui(int windowID)
-        {
-            ReentryEffect effects = null;
-            if (VesselDict.ContainsKey(FlightGlobals.ActiveVessel.id))
-                effects = VesselDict[FlightGlobals.ActiveVessel.id];
-
-            if (effects == null)
-            {
-                GUILayout.Label("ReentryFX is null");
-                return;
-            }
-            if (effects.Trail == null)
-            {
-                GUILayout.Label("Trail is null");
-            }
-            if (effects.Sparks == null)
-            {
-                GUILayout.Label("Sparks is null");
-            }
-            
-            GuiUtils.label("Effect Strength", effectStrength);
-            GuiUtils.label("Stock effect Strength", afx1.FxScalar * afx1.state);
-            
-            float highestTemp = GetVesselMaxSkinTemp();
-            Color blackBodyColor = BlackBodyToRgb(highestTemp);
-            if (FlightGlobals.ActiveVessel != null && FlightGlobals.ActiveVessel.rootPart != null)
-            {
-                GuiUtils.label("Highest temp", highestTemp);
-                GuiUtils.label("Blackbody colour", blackBodyColor);
-
-                GuiUtils.label("temperature", FlightGlobals.ActiveVessel.rootPart.temperature);
-                GuiUtils.label("skinTemperature", FlightGlobals.ActiveVessel.rootPart.skinTemperature);
-                GuiUtils.label("skinUnexposedExternalTemp", FlightGlobals.ActiveVessel.rootPart.skinUnexposedExternalTemp);
-                GuiUtils.label("tempExplodeChance", FlightGlobals.ActiveVessel.rootPart.tempExplodeChance);
-
-                GuiUtils.label("MaxTemp", FlightGlobals.ActiveVessel.rootPart.maxTemp);
-                GuiUtils.label("SkinMaxTemp", FlightGlobals.ActiveVessel.rootPart.skinMaxTemp);
-            }
-
-            GUILayout.Label("Max Particles");
-            this.MaxParticles = (int)GUILayout.HorizontalSlider(this.MaxParticles, 0, 10000);
-            GUILayout.Label("Max Emission Rate");
-            this.MaxEmissionRate = (int)GUILayout.HorizontalSlider(this.MaxEmissionRate, 0, 1000);
-
-            GUILayout.Label("Trail");
-            if (effects.Trail == null)
-                GUILayout.Label("Trail is null");
-            else
-            {
-                ParticleSystem.MainModule trailMain = effects.Trail.main;
-                float trailPlaybackSpeed = trailMain.simulationSpeed;
-                _trailPlaybackText = GuiUtils.editFloat("Playback speed", _trailPlaybackText, out trailPlaybackSpeed, 5);
-                trailMain.simulationSpeed = trailPlaybackSpeed;
-
-                //Color key0 = new Color(1f, 0.545f, 0.192f, 1f);
-                //Color key1 = new Color(0.725f, 0.169f, 0f, 1f);
-                Color key0 = effects.Trail.colorOverLifetime.color.gradient.colorKeys[0].color;
-                Color key1 = effects.Trail.colorOverLifetime.color.gradient.colorKeys[1].color;
-
-                /*Gradient grad = new Gradient();
-                grad.SetKeys(
-                    new GradientColorKey[] { new GradientColorKey(Color.blue, 0.0f), new GradientColorKey(Color.red, 1.0f) }, 
-                    new GradientAlphaKey[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) }
-                    );
-                */
-
-                key0 = GuiUtils.rgbaSlider("Colour Gradient 0", ref key0.r, ref key0.g, ref key0.b, ref key0.a, 0f, 1f);
-                key1 = GuiUtils.rgbaSlider("Colour Gradient 1", ref key1.r, ref key1.g, ref key1.b, ref key1.a, 0f, 1f);
-
-                effects.Trail.colorOverLifetime.color.gradient.colorKeys[0].color = key0;
-                effects.Trail.colorOverLifetime.color.gradient.colorKeys[1].color = key1;
-
-                //Color cMax = trailMain.startColor.colorMax;
-                //Color cMin = trailMain.startColor.colorMin;
-                //cMax = GuiUtils.rgbaSlider("Max Colour", ref cMax.r, ref cMax.g, ref cMax.b, ref cMax.a, 0f, 1f);
-                //cMin = GuiUtils.rgbaSlider("Min Colour", ref cMin.r, ref cMin.g, ref cMin.b, ref cMin.a, 0f, 1f);
-                //trailMain.startColor = new ParticleSystem.MinMaxGradient(cMin, cMax);
-                //trailMain.startColor = new ParticleSystem.MinMaxGradient(blackBodyColor, BlackBodyToRgb(highestTemp * 2));
-            }
-
-            /*
-            GUILayout.Label("Sparks");
-            if (effects.Sparks == null)
-                GUILayout.Label("Sparks is null");
-            else
-            {
-                var sparksMain = effects.Sparks.main;
-                float sparksPlaybackSpeed = sparksMain.simulationSpeed;
-                _sparksPlaybackText = GuiUtils.editFloat("Playback speed", _sparksPlaybackText, out sparksPlaybackSpeed, 5);
-                sparksMain.simulationSpeed = sparksPlaybackSpeed;
-            }*/
-
-            scaleXText = GuiUtils.editFloat("X Scale", scaleXText, out scaleX, 1);
-            scaleYText = GuiUtils.editFloat("Y Scale", scaleYText, out scaleY, 1);
-            scaleZText = GuiUtils.editFloat("Z Scale", scaleZText, out scaleZ, 1);
-            GUI.DragWindow();
-        }
-
-        public static float GetVesselMaxSkinTemp()
-        {
-            float maxTemp = 0;
-
-            int partCount = FlightGlobals.ActiveVessel.parts.Count;
-            for (int i = 0; i < partCount; i++)
-            {
-                maxTemp = (float)Math.Max(FlightGlobals.ActiveVessel.parts[i].skinTemperature, maxTemp);
-            }
-
-            return maxTemp;
-        }
-#endif
-    }
-
-    #if DEBUG && AUTOCHEAT
+#if DEBUG && AUTOCHEAT
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     class AutoStartup : UnityEngine.MonoBehaviour
     {
@@ -435,5 +302,5 @@ namespace ReentryParticleEffect
             }
         }
     }
-    #endif
+#endif
 }
