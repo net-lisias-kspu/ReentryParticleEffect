@@ -16,27 +16,23 @@
 	If not, see <https://www.gnu.org/licenses/>.
 
 */
-using System.Collections.Generic;
-
 using UnityEngine;
 using KSP.UI.Screens;
 
 using KSPe.Annotations;
 using Toolbar = KSPe.UI.Toolbar;
-using GUI = KSPe.UI.GUI;
-using GUILayout = KSPe.UI.GUILayout;
 
 namespace ReentryParticleEffect
 {
-	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
+	[KSPAddon(KSPAddon.Startup.FlightAndKSC, false)]
 	public class ToolbarController : MonoBehaviour
 	{
-		internal static KSPe.UI.Toolbar.Toolbar Instance => KSPe.UI.Toolbar.Controller.Instance.Get<ToolbarController>();
+		internal static Toolbar.Toolbar Instance => KSPe.UI.Toolbar.Controller.Instance.Get<ToolbarController>();
 
 		[UsedImplicitly]
 		private void Start()
 		{
-			KSPe.UI.Toolbar.Controller.Instance.Register<ToolbarController>(Version.FriendlyName);
+			Toolbar.Controller.Instance.Register<ToolbarController>(Version.FriendlyName);
 		}
 	}
 
@@ -48,15 +44,14 @@ namespace ReentryParticleEffect
 		[UsedImplicitly]
 		private void Start()
 		{
-		#if DEBUG
-			Toolbar.Button b = Toolbar.Button.Create(this
-					, ApplicationLauncher.AppScenes.FLIGHT
+			Toolbar.Button b = Toolbar.Button.Create(this, Version.FriendlyName
+					, ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.SPACECENTER
+					, Toolbar.State.Data.Create(), Toolbar.State.Data.Create()
 					, Version.FriendlyName
 				);
 			b.Toolbar.Add(Toolbar.Button.ToolbarEvents.Kind.Active
 					, new Toolbar.Button.Event(this.OnActivated, this.OnDeactivated)
 				);
-		#endif
 		}
 
 		private void OnDeactivated()

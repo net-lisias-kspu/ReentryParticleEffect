@@ -36,16 +36,14 @@ namespace ReentryParticleEffect
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class ReentryParticleEffect : MonoBehaviour
     {
-		internal static bool DrawGui = true;
+		internal static bool DrawGui = false;
 		private readonly Settings.Parameters settings = Settings.Parameters.Instance;
 
-#if DEBUG
 		private readonly Settings.UI ui;
 		public ReentryParticleEffect() : base()
 		{
 			this.ui = Settings.UI.CreateFor(this);
 		}
-#endif
 
 		[UsedImplicitly]
 		private void Start()
@@ -143,7 +141,6 @@ namespace ReentryParticleEffect
                 ParticleSystem.EmissionModule sparksEmission = effects.Sparks.emission;
                 if (AeroFX != null)
                 {
-                    //effects.Trail.transform.localScale = new Vector3(TrailScale, TrailScale, TrailScale);
 #if AERODYNAMICSFX
                     this.afx1 = AeroFX;
                     effects.Trail.transform.localScale = new Vector3(this.settings.scaleX, this.settings.scaleY, this.settings.scaleZ);
@@ -270,14 +267,12 @@ namespace ReentryParticleEffect
             return new Color(red/255, green/255, blue/255, 1);
         }
 
-	#if DEBUG
 		[UsedImplicitly]
 		private void OnGUI()
 		{
 			if (!DrawGui) return;
 			this.ui.OnGUI();
 		}
-	#endif
 	}
 
 #if DEBUG && AUTOCHEAT
